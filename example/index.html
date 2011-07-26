@@ -1,16 +1,52 @@
 <!DOCTYPE html>
 <html>
+<!--
+Copyright (C) 2011 by Ragnis Armus
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
 <head>
 	<title>Taco example</title>
 	<script src="taco.js"></script>
 	<script>
-		var thread = TACO.createThread(); // create a new taco thread
-		thread.link = 'https://github.com/ragnis/taco'; // set page url
-		thread.tweets_per_page = 10; // how many tweets per page?
+		// Create a new taco thread instance
+		var thread = TACO.createThread();
 
-		// callback, that will render the tweets.
-		// you can see the structure of `data` object
-		// at https://dev.twitter.com/docs/api/1/get/search
+		// Set the page url.
+		// Normally this would be the url of your blog post or
+		// the page that the comments are about.
+		// Please note that the url MUST be prefixed with
+		// the protocol (e.g http:// or https://).
+		thread.link = 'https://github.com/ragnis/taco';
+
+		// How many tweets will be displayer per page?
+		// Maximum in 100 tweets.
+		thread.tweets_per_page = 10;
+
+		// When you request to load new tweets via thread.getTweets
+		// the tweets will be passed to this callback.
+		// You should render your tweets in this callback.
+		//
+		// A javascript object will be passed to this callback
+		// as first argument.
+		// You can see the structure of this object at
+		// https://dev.twitter.com/docs/api/1/get/search
 		thread.on_render = function (data)
 		{
 			document.getElementById('tweets').innerHTML = '';
@@ -19,34 +55,101 @@
 			{
 				var tweet = data.results[i];
 
-				document.getElementById('tweets')
-					.innerHTML += '<p><strong>@' + tweet.from_user + '</strong> ' + tweet.text + '</p>';
+				var user = '<strong>@' + tweet.from_user + '</strong>';
+				var html = '<p>' + user + ': ' + tweet.text + '</p>';
+
+				document.getElementById('tweets').innerHTML += html;
 			}
 		};
 
-		// load tweets.
-		// calling this method will call thread.on_render,
-		// that we set earlier.
+		// Now we will load the first page of tweets.
+		// Calling this function will call the thread.on_render
+		// callback, that we previously defined.
 		thread.getTweets({page: 1});
 
 		function previous ()
 		{
-			// if we are already on first page, do nothing
-			if (thread.current_page == 1) return;
+			// If we are already on first page, there is
+			// no previous page to go to.
+			if (thread.current_page == 1)
+			{
+				return;
+			}
 
+			// Get the previous page number and load that page.
 			thread.getTweets({page: thread.current_page - 1});
 		}
 
 		function next ()
 		{
+			// Get the next page number and load that page.
 			thread.getTweets({page: thread.current_page + 1});
 		}
+
+		function tweet ()
+		{
+			// This function will open a popup, where user can
+			// tweet their comment.
+			thread.tweet();
+		}
 	</script>
+
+	<style type="text/css">
+		/**
+		 * Just to make this example look a little better.
+		 * This has nothing to do with how Taco works.
+		 */
+		body {
+			max-width: 700px;
+			font-size: 13px;
+			font-family: Lucida-Grande, Verdana, Arial, sans-serif;
+		}
+
+		a {
+			color: #555;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		p {
+			margin: 0 0 10px 0;
+			padding: 0;
+			line-height: 1.6;
+		}
+
+		#tweets {
+			padding: 5px;
+			border: 1px solid #ccc;
+			background: #eee;
+		}
+	</style>
 </head>
 <body>
+	<h1>Taco usage example</h1>
 	<div id="tweets">Loading tweets...</div>
+
 	<a href="#" onclick="previous()">Previous</a>
 	<a href="#" onclick="next()">Next</a>
-	<a href="#" onclick="thread.tweet()">Tweet a comment</a>
+
+	<h2>About this example</h2>
+	<p>
+		This is an example for Taco javascript utility. To tweet a new
+		comment, <a href="#" onclick="tweet()"><strong>click here</strong></a>.
+	</p>
+	<p>
+		Please note that it may take some time for your tweet to appear and
+		you will need to refresh the page to see it (real-time support is coming
+		soon).
+	</p>
+	<p>
+		Also please do not change or remove the url that you see in your tweet's
+		content. It is used to find your tweet and display it on this page.
+	</p>
+	<p>
+		To learn more about Taco, go to <a href="https://github.com/Ragnis/Taco">github.com/Ragnis/Taco</a>
+	</p>
 </body>
 </html>

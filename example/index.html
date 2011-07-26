@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Taco example</title>
+	<script src="taco.js"></script>
+	<script>
+		var thread = TACO.createThread(); // create a new taco thread
+		thread.link = 'https://github.com/ragnis/taco'; // set page url
+		thread.tweets_per_page = 10; // how many tweets per page?
+
+		// callback, that will render the tweets.
+		// you can see the structure of `data` object
+		// at https://dev.twitter.com/docs/api/1/get/search
+		thread.on_render = function (data)
+		{
+			document.getElementById('tweets').innerHTML = '';
+
+			for (var i = 0; i < data.results.length; i++)
+			{
+				var tweet = data.results[i];
+
+				document.getElementById('tweets')
+					.innerHTML += '<p><strong>@' + tweet.from_user + '</strong> ' + tweet.text + '</p>';
+			}
+		};
+
+		// load tweets.
+		// calling this method will call thread.on_render,
+		// that we set earlier.
+		thread.getTweets({page: 1});
+
+		function previous ()
+		{
+			// if we are already on first page, do nothing
+			if (thread.current_page == 1) return;
+
+			thread.getTweets({page: thread.current_page - 1});
+		}
+
+		function next ()
+		{
+			thread.getTweets({page: thread.current_page + 1});
+		}
+	</script>
+</head>
+<body>
+	<div id="tweets">Loading tweets...</div>
+	<a href="#" onclick="previous()">Previous</a>
+	<a href="#" onclick="next()">Next</a>
+	<a href="#" onclick="thread.tweet()">Tweet a comment</a>
+</body>
+</html>

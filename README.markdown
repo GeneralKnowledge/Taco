@@ -3,7 +3,7 @@ Taco
 Taco is a javascript utility, that will let you to use
 Twitter as your blog commenting system.
 
-For an example, see http://ragnis.github.com/taco/example
+For an example, see http://ragnis.github.com/Taco/example
 
 Usage
 =====

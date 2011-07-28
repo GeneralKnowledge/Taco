@@ -40,7 +40,7 @@ var TACO = TACO || {};
 	{
 		_init();
 
-		return new _threadObject();
+		return new threadObject();
 	};
 
 	/**
@@ -61,7 +61,7 @@ var TACO = TACO || {};
 	/**
 	 * Thread object
 	 */
-	var _threadObject = function ()
+	var threadObject = function ()
 	{
 		var self = this;
 

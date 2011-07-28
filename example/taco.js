@@ -40,7 +40,7 @@ var TACO = TACO || {};
 	{
 		_init();
 
-		return new _threadObject();
+		return new threadObject();
 	};
 
 	/**
@@ -61,7 +61,7 @@ var TACO = TACO || {};
 	/**
 	 * Thread object
 	 */
-	var _threadObject = function ()
+	var threadObject = function ()
 	{
 		var self = this;
 
@@ -81,6 +81,16 @@ var TACO = TACO || {};
 		 * If there are no tweets loaded yet, this will be null
 		 */
 		this.current_page = null;
+
+		/**
+		 * Is there a next page to load?
+		 */
+		this.has_next_page = false;
+
+		/**
+		 * Is there a previous page to load?
+		 */
+		this.has_previous_page = false;
 
 		/**
 		 * Callback, that will be called each time,
@@ -125,6 +135,44 @@ var TACO = TACO || {};
 				page: params.page || 1,
 				callback: self.on_render
 			});
+
+			return true;
+		};
+
+		/**
+		 * Load next page of tweets (if available) and call
+		 * on_render callback.
+		 * If there is nothing to load, return false.
+		 */
+		this.getNextPage = function ()
+		{
+			if (self.has_next_page !== true)
+			{
+				return false;
+			}
+
+			self.loadTweets({
+				page: self.current_page + 1,
+				callback: self.on_render
+			});
+		};
+
+		/**
+		 * Load previous page of tweets (if available) and call
+		 * on_render callback.
+		 * If there is nothing to load, return false.
+		 */
+		this.getPreviousPage = function ()
+		{
+			if (self.has_previous_page !== true)
+			{
+				return false;
+			}
+
+			self.loadTweets({
+				page: self.current_page - 1,
+				callback: self.on_render
+			});
 		};
 
 		/**
@@ -142,6 +190,8 @@ var TACO = TACO || {};
 			TACO._jsonpc[cbid] = function (data)
 			{
 				self.current_page = data.page;
+				self.has_next_page = (data.next_page != undefined) ? true : false;
+				self.has_previous_page = (data.page == 1) ? false : true;
 
 				if (typeof params.callback === 'function')
 				{

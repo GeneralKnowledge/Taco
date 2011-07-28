@@ -67,25 +67,6 @@ THE SOFTWARE.
 		// callback, that we previously defined.
 		thread.getTweets({page: 1});
 
-		function previous ()
-		{
-			// If we are already on first page, there is
-			// no previous page to go to.
-			if (thread.current_page == 1)
-			{
-				return;
-			}
-
-			// Get the previous page number and load that page.
-			thread.getTweets({page: thread.current_page - 1});
-		}
-
-		function next ()
-		{
-			// Get the next page number and load that page.
-			thread.getTweets({page: thread.current_page + 1});
-		}
-
 		function tweet ()
 		{
 			// This function will open a popup, where user can
@@ -131,8 +112,8 @@ THE SOFTWARE.
 	<h1>Taco usage example</h1>
 	<div id="tweets">Loading tweets...</div>
 
-	<a href="#" onclick="previous()">Previous</a>
-	<a href="#" onclick="next()">Next</a>
+	<a href="#" onclick="thread.getPreviousPage()">Previous</a>
+	<a href="#" onclick="thread.getNextPage()">Next</a>
 
 	<h2>About this example</h2>
 	<p>
